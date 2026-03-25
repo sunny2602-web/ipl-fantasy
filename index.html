@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPL 2026 – Friendly Fantasy League Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#0a1628;--blue2:#0e2244;--blue3:#1a3a6e;
+  --red:#e8192c;--red2:#ff3347;--gold:#ffd700;
+  --white:#fff;--green:#00c853;--card:#111e38;
+  --border:#1e3a6a;--glow:0 0 18px rgba(232,25,44,.45);
+  --shadow:0 4px 24px rgba(0,0,0,.5);
+}
+body.dark-mode{background:#0a1628;color:#fff}
+body.light-mode{--blue:#f0f2f5;--blue2:#e0e4ea;--blue3:#ccd3de;--card:#fff;--border:#c5ccd8;background:#f0f2f5;color:#111}
+body.light-mode .tabs{background:var(--blue2)!important}
+body.light-mode .tab{color:#444!important}
+body.light-mode .card{background:#fff!important;border-color:#dde3ee!important;color:#111!important}
+body.light-mode input,body.light-mode select{background:#f8f9fc!important;color:#111!important;border-color:#c5ccd8!important}
+body.light-mode .lb-table th{background:var(--blue3)!important;color:#111!important}
+body.light-mode .lb-table td{color:#111!important}
+body.light-mode .ipl-team-block{background:#f4f6fb!important;border-color:#dde3ee!important}
+body.light-mode .player-row{background:rgba(0,0,0,.04)!important}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--blue);color:var(--white);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s}
+
+/* LOGIN */
+.login-container{display:none;position:fixed;inset:0;background:linear-gradient(135deg,#060e1e,#0e2244);z-index:300;align-items:center;justify-content:center;padding:20px}
+.login-container.show{display:flex}
+.login-box{background:#111e38;border:2px solid var(--red);border-radius:18px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 24px 70px rgba(232,25,44,.35);text-align:center}
+.login-title{font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;color:var(--gold);margin-bottom:6px;letter-spacing:2px}
+.login-sub{font-size:13px;color:#7a9ab8;margin-bottom:26px;letter-spacing:1px}
+.login-form{display:flex;flex-direction:column;gap:13px}
+.login-form input{background:#0a1628;border:1px solid var(--border);border-radius:8px;padding:12px 15px;color:#fff;font-size:15px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color .2s}
+.login-form input:focus{border-color:var(--red)}
+.login-form input::placeholder{color:#445}
+.login-error{color:var(--red2);font-size:13px;display:none;text-align:left;padding:4px 0}
+.login-btn{background:linear-gradient(135deg,var(--red),#900015);border:none;border-radius:9px;padding:14px;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;cursor:pointer;transition:all .2s;box-shadow:var(--glow)}
+.login-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.login-btn.viewer-btn{background:linear-gradient(135deg,#162a50,#0e1e38);box-shadow:none;border:1px solid #2a4070;color:#8ab}
+.login-divider{display:flex;align-items:center;gap:10px;color:#344;font-size:12px;letter-spacing:1px}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#060e1e,#0e2244 50%,#060e1e);border-bottom:3px solid var(--red);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(232,25,44,.06),transparent 70%)}
+.header-center{flex:1;text-align:center}
+.header-logo{font-family:'Orbitron',sans-serif;font-size:clamp(16px,4vw,32px);font-weight:900;color:var(--gold);letter-spacing:2px;text-shadow:0 0 20px rgba(255,215,0,.5)}
+.header-sub{font-family:'Bebas Neue',sans-serif;font-size:clamp(12px,2.5vw,18px);color:var(--red2);letter-spacing:4px;margin-top:2px}
+.header-actions{display:flex;align-items:center;gap:7px;position:relative;z-index:2;flex-wrap:wrap;justify-content:flex-end}
+.hbtn{background:rgba(232,25,44,.15);border:1px solid rgba(232,25,44,.4);border-radius:7px;padding:6px 12px;color:var(--red2);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'Rajdhani',sans-serif}
+.hbtn:hover{background:rgba(232,25,44,.28);transform:scale(1.04)}
+.hbtn.gold{border-color:rgba(255,215,0,.4);color:var(--gold);background:rgba(255,215,0,.08);cursor:default}
+
+/* TABS */
+.tabs{display:flex;background:var(--blue2);border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:100px;padding:12px 6px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;cursor:pointer;border-bottom:3px solid transparent;transition:all .22s;color:#6a8aaa;white-space:nowrap}
+.tab.active{color:#fff;border-bottom-color:var(--red);background:rgba(232,25,44,.1)}
+.tab:hover:not(.active){color:#ccd;background:rgba(255,255,255,.04)}
+
+/* PAGES */
+.page{display:none;padding:14px;max-width:1100px;margin:0 auto;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;color:var(--gold);margin-bottom:13px;display:flex;align-items:center;gap:9px}
+.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* PARTICIPANT SECTIONS */
+.participant-section{background:linear-gradient(145deg,#0e1e38,#0a1628);border:1px solid var(--border);border-radius:14px;margin-bottom:18px;overflow:hidden}
+.participant-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(90deg,rgba(232,25,44,.12),rgba(26,58,110,.2));border-bottom:1px solid var(--border);cursor:pointer;user-select:none;gap:12px}
+.participant-header:hover{background:linear-gradient(90deg,rgba(232,25,44,.18),rgba(26,58,110,.28))}
+.participant-name-big{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff}
+.participant-stats{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.p-stat{font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;letter-spacing:.5px}
+.p-stat.players{background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.25)}
+.p-stat.pts{background:rgba(0,200,83,.12);color:var(--green);border:1px solid rgba(0,200,83,.25)}
+.p-stat.paid-yes{background:rgba(0,200,83,.12);color:var(--green)}
+.p-stat.paid-no{background:rgba(232,25,44,.12);color:var(--red2)}
+.chevron{font-size:14px;color:#8ab;transition:transform .3s;margin-left:4px}
+.participant-section.collapsed .chevron{transform:rotate(-90deg)}
+.participant-body{padding:14px 16px}
+.participant-section.collapsed .participant-body{display:none}
+
+/* IPL TEAM BLOCKS */
+.ipl-teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:12px}
+.ipl-team-block{background:#0d1a2e;border:1px solid var(--border);border-radius:10px;padding:13px;transition:box-shadow .2s}
+.ipl-team-block:hover{box-shadow:0 4px 20px rgba(232,25,44,.15)}
+.ipl-team-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ipl-team-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;display:flex;align-items:center;gap:7px}
+.team-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.slot-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px}
+.slot-full{background:rgba(0,200,83,.15);color:var(--green);border:1px solid rgba(0,200,83,.3)}
+.slot-partial{background:rgba(255,215,0,.12);color:var(--gold);border:1px solid rgba(255,215,0,.25)}
+.slot-empty-badge{background:rgba(255,255,255,.05);color:#6a8aaa;border:1px solid rgba(255,255,255,.1)}
+
+/* PLAYER ROWS */
+.player-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;background:rgba(255,255,255,.05);border-radius:7px;padding:8px 10px}
+.role-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.4px;flex-shrink:0}
+.role-bat{background:#1565c0;color:#fff}
+.role-wk{background:#4a148c;color:#fff}
+.role-bowl{background:#880e4f;color:#fff}
+.role-all{background:#1b5e20;color:#fff}
+.pl-name{flex:1;font-size:13px;font-weight:600}
+.pl-pts{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--gold)}
+.del-btn{background:none;border:none;color:#c44;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:4px;line-height:1}
+.del-btn:hover{background:rgba(200,60,60,.15)}
+
+.empty-slot-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;padding:7px 10px;border:1px dashed rgba(255,255,255,.08);border-radius:7px;color:#3a4a5a;font-size:12px}
+.add-pl-btn{width:100%;padding:7px;background:rgba(232,25,44,.08);border:1px dashed rgba(232,25,44,.4);border-radius:6px;color:var(--red2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;margin-top:4px}
+.add-pl-btn:hover:not(:disabled){background:rgba(232,25,44,.2)}
+.add-pl-btn:disabled{opacity:.3;cursor:not-allowed;border-color:rgba(255,255,255,.1);color:#4a5a6a}
+.add-pl-btn.team-full{border-color:rgba(0,200,83,.3);color:var(--green);background:rgba(0,200,83,.07)}
+
+/* SCORE FORM */
+.score-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.score-form{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:11px;font-weight:700;color:#6a8aaa;letter-spacing:.5px;text-transform:uppercase}
+select,input[type=number],input[type=text]{background:#080f1e;border:1px solid var(--border);border-radius:7px;color:#fff;padding:9px 12px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;width:100%;outline:none;transition:border-color .2s}
+select:focus,input:focus{border-color:var(--red)}
+select option{background:#080f1e}
+.cb-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.cb-item{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;font-weight:600}
+.cb-item input{accent-color:var(--red);width:15px;height:15px}
+.btn{padding:10px 22px;border:none;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--red),#900015);color:#fff;box-shadow:var(--glow)}
+.btn-primary:hover{transform:translateY(-1px);filter:brightness(1.1)}
+.btn-secondary{background:#1a3a6e;color:#fff}
+.btn-secondary:hover{background:#255aa0}
+.btn-success{background:linear-gradient(135deg,var(--green),#008c30);color:#fff}
+.btn-danger{background:linear-gradient(135deg,#ff3347,#aa0010);color:#fff}
+.btn-sm{padding:6px 13px;font-size:13px;letter-spacing:1px}
+
+/* LEADERBOARD */
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{background:var(--blue3);padding:10px 12px;text-align:left;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold)}
+.lb-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px;font-weight:600}
+.lb-table tr:last-child td{border-bottom:none}
+.lb-table tr:hover td{background:rgba(255,255,255,.03)}
+.rank-1{color:var(--gold);font-family:'Orbitron',sans-serif}
+.rank-2{color:#c0c0c0;font-family:'Orbitron',sans-serif}
+.rank-3{color:#cd7f32;font-family:'Orbitron',sans-serif}
+.pts-cell{font-family:'Orbitron',sans-serif;font-size:15px;color:var(--gold)}
+.pay-badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.pay-paid{background:rgba(0,200,83,.2);color:var(--green)}
+.pay-pend{background:rgba(232,25,44,.2);color:var(--red2)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:#0e1e38;border:1px solid var(--border);border-radius:14px;padding:22px;width:100%;max-width:420px;box-shadow:0 24px 70px rgba(0,0,0,.8);animation:slideUp .28s ease}
+@keyframes slideUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:2px;color:var(--gold);margin-bottom:14px}
+.modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+.modal-info{font-size:12px;color:#6a8aaa;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:7px;margin-top:8px;line-height:1.7}
+.modal-info strong{color:var(--gold)}
+
+/* HISTORY */
+.filter-row{display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap}
+.filter-row select{flex:1;min-width:140px}
+.hist-item{background:rgba(255,255,255,.04);border-radius:8px;padding:10px 13px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+/* TOP PLAYERS */
+.tp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:11px}
+.tp-card{background:linear-gradient(145deg,#0e1e38,#0a1628);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:transform .2s}
+.tp-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(232,25,44,.18)}
+.tp-rank{font-size:22px;margin-bottom:6px}
+.tp-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;margin-bottom:7px}
+.tp-pts{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--gold);margin-bottom:6px}
+.tp-meta{font-size:11px;color:#6a8aaa}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:#0e2244;border:1px solid var(--green);border-radius:10px;padding:11px 18px;color:var(--green);font-weight:700;font-size:13px;z-index:999;transform:translateY(70px);opacity:0;transition:all .32s;box-shadow:0 4px 18px rgba(0,200,83,.25)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{border-color:var(--red);color:var(--red2)}
+
+/* WINNER */
+.winner-popup{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#0e1e38,#1a3a6e);border:2px solid var(--gold);border-radius:18px;padding:40px 32px;max-width:360px;width:90%;text-align:center;z-index:600;box-shadow:0 20px 70px rgba(255,215,0,.35)}
+.winner-popup.show{display:block;animation:popIn .4s ease}
+@keyframes popIn{from{transform:translate(-50%,-50%) scale(.8);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.w-emoji{font-size:56px;margin-bottom:12px;animation:wspin 2s linear infinite}
+@keyframes wspin{to{transform:rotate(360deg)}}
+.w-title{font-family:'Orbitron',sans-serif;font-size:32px;color:var(--gold);margin-bottom:10px}
+.w-name{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;margin-bottom:8px}
+.w-pts{font-family:'Orbitron',sans-serif;font-size:22px;color:var(--green)}
+.confetti-p{position:fixed;width:9px;height:9px;pointer-events:none;z-index:700}
+
+/* RULES */
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:10px}
+.rule-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:12px}
+.rule-box-title{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--gold);margin-bottom:8px}
+.rule-row{display:flex;justify-content:space-between;padding:3px 0;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+.rule-row:last-child{border-bottom:none}
+.rv.pos{color:var(--green);font-weight:700;font-family:'Orbitron',sans-serif;font-size:11px}
+.rv.neg{color:var(--red2);font-weight:700;font-family:'Orbitron',sans-serif;font-size:11px}
+.rv.neu{color:var(--gold);font-weight:700;font-family:'Orbitron',sans-serif;font-size:11px}
+.info-bar{background:linear-gradient(90deg,rgba(232,25,44,.1),rgba(26,58,110,.2));border:1px solid rgba(232,25,44,.25);border-radius:9px;padding:11px 15px;font-size:13px;color:#9abacc;line-height:1.7}
+.info-bar strong{color:var(--gold)}
+
+.sdivider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:12px 0}
+.admin-only.hidden{display:none!important}
+.viewer-only{display:none}
+.viewer-only.show{display:block}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+@media(max-width:640px){
+  .header{flex-direction:column;gap:8px;padding:12px}
+  .header-actions{width:100%;justify-content:center}
+  .ipl-teams-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body class="dark-mode">
+
+<!-- LOGIN -->
+<div id="login-container" class="login-container">
+  <div class="login-box">
+    <div class="login-title">🏏 IPL 2026</div>
+    <div class="login-sub">FRIENDLY FANTASY LEAGUE – PRO MODE</div>
+    <div class="login-form">
+      <input type="text" id="login-username" placeholder="Admin Username (ipl2026)" autocomplete="off">
+      <input type="password" id="login-password" placeholder="Admin Password">
+      <div id="login-error" class="login-error"></div>
+      <button class="login-btn" onclick="handleLogin()">🔐 ADMIN LOGIN</button>
+      <div class="login-divider">OR</div>
+      <button class="login-btn viewer-btn" onclick="enterAsViewer()">👁️ VIEW AS GUEST (Viewer)</button>
+    </div>
+  </div>
+</div>
+
+<!-- WINNER -->
+<div id="winner-popup" class="winner-popup">
+  <div class="w-emoji">🏆</div>
+  <div class="w-title">CHAMPION!</div>
+  <div class="w-name" id="winner-name">-</div>
+  <div class="w-pts" id="winner-points">-</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="min-width:50px"></div>
+  <div class="header-center">
+    <div class="header-logo">🏏 Friendly Fantasy League</div>
+    <div class="header-sub">Pro Mode · Friends Edition · IPL 2026</div>
+  </div>
+  <div class="header-actions">
+    <span id="sync-status" style="font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--green)">🔴 Live</span>
+    <span class="hbtn gold" id="role-badge">👁️ VIEWER</span>
+    <button class="hbtn" onclick="toggleTheme()">🌙 Dark</button>
+    <button class="hbtn" onclick="openLogin()" id="login-btn-header">🔐 LOGIN</button>
+    <button class="hbtn" onclick="handleLogout()" id="logout-btn" style="display:none">LOG OUT</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tab-teams" onclick="switchTab('teams')">🏏 TEAMS</div>
+  <div class="tab" id="tab-score" onclick="switchTab('score')">📊 SCORE</div>
+  <div class="tab" id="tab-leaderboard" onclick="switchTab('leaderboard')">🏆 LEADERBOARD</div>
+  <div class="tab" id="tab-topplayers" onclick="switchTab('topplayers')">⭐ TOP PLAYERS</div>
+  <div class="tab" id="tab-history" onclick="switchTab('history')">📅 HISTORY</div>
+</div>
+
+<!-- PAGE: TEAMS -->
+<div id="page-teams" class="page active">
+  <div class="card">
+    <div class="card-title">📋 POINTS RULES</div>
+    <div class="rules-grid">
+      <div class="rule-box">
+        <div class="rule-box-title">🏏 Batting</div>
+        <div class="rule-row"><span>Each Run</span><span class="rv pos">+1</span></div>
+        <div class="rule-row"><span>Each Four</span><span class="rv pos">+4</span></div>
+        <div class="rule-row"><span>Each Six</span><span class="rv pos">+6</span></div>
+        <div class="rule-row"><span>50 Runs Bonus</span><span class="rv pos">+50</span></div>
+        <div class="rule-row"><span>100 Runs Bonus</span><span class="rv pos">+100</span></div>
+        <div class="rule-row"><span>Duck (0 runs)</span><span class="rv neg">−30</span></div>
+      </div>
+      <div class="rule-box">
+        <div class="rule-box-title">🎯 Bowling</div>
+        <div class="rule-row"><span>Each Wicket</span><span class="rv pos">+30</span></div>
+        <div class="rule-row"><span>Maiden Over</span><span class="rv pos">+30</span></div>
+        <div class="rule-row"><span>3 Wickets Bonus</span><span class="rv pos">+60</span></div>
+        <div class="rule-row"><span>5 Wickets Bonus</span><span class="rv pos">+60</span></div>
+        <div class="rule-row"><span>0 Wickets Penalty</span><span class="rv neg">−30</span></div>
+      </div>
+      <div class="rule-box">
+        <div class="rule-box-title">🤝 Fielding &amp; Bonus</div>
+        <div class="rule-row"><span>Each Catch</span><span class="rv pos">+30</span></div>
+        <div class="rule-row"><span>Man of the Match</span><span class="rv pos">+100</span></div>
+        <div class="rule-row"><span>Captain</span><span class="rv neu">×2 Points</span></div>
+      </div>
+      <div class="rule-box">
+        <div class="rule-box-title">👥 Squad Rules</div>
+        <div class="rule-row"><span>Players per IPL team</span><span class="rv neu">Max 3</span></div>
+        <div class="rule-row"><span>Total IPL teams</span><span class="rv neu">10 Teams</span></div>
+        <div class="rule-row"><span>Max per participant</span><span class="rv pos">30 players</span></div>
+        <div class="rule-row"><span>Entry fee</span><span class="rv neu">₹500</span></div>
+      </div>
+    </div>
+    <div class="info-bar">
+      💰 <strong>₹500 per participant</strong> &nbsp;·&nbsp;
+      Select <strong>max 3 players from each of the 10 IPL teams</strong> &nbsp;·&nbsp;
+      Highest total points = <strong>Winner 🏆</strong> &nbsp;·&nbsp; Losers → Party! 😄
+    </div>
+  </div>
+
+  <div class="card admin-only">
+    <div class="card-title">👥 MANAGE PARTICIPANTS</div>
+    <div style="display:flex;gap:10px;margin-bottom:13px">
+      <input type="text" id="participant-input" placeholder="Participant name..." style="flex:1">
+      <button class="btn btn-primary btn-sm" onclick="addParticipant()">+ ADD</button>
+    </div>
+    <div id="participant-list"></div>
+    <div class="sdivider"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-success btn-sm" onclick="toggleTeamLock()" id="lock-btn">🔓 LOCK TEAMS</button>
+      <span style="font-size:12px;color:#6a8aaa" id="lock-status"></span>
+    </div>
+  </div>
+
+  <div class="card-title" style="padding:0 4px;margin-bottom:12px">
+    🏟️ PARTICIPANT SQUADS
+    <span style="font-size:12px;color:#6a8aaa;font-family:'Rajdhani',sans-serif;font-weight:400;letter-spacing:0"> — 10 IPL Teams × 3 Players = 30 per participant</span>
+  </div>
+  <div id="squads-container"></div>
+
+  <div class="viewer-only" id="viewer-msg" style="text-align:center;padding:40px 20px;color:#6a8aaa">
+    <div style="font-size:44px;margin-bottom:14px">👁️</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px;color:#ccd">Viewer Mode</div>
+    <div style="font-size:14px;margin-bottom:16px">Squads and leaderboard are visible. Score entry requires Admin login.</div>
+    <button class="btn btn-primary btn-sm" onclick="openLogin()">🔐 ADMIN LOGIN</button>
+  </div>
+</div>
+
+<!-- PAGE: SCORE -->
+<div id="page-score" class="page">
+  <div class="card admin-only">
+    <div class="card-title">📊 ENTER MATCH SCORE</div>
+    <div style="background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.25);border-radius:11px;padding:16px;margin-bottom:16px;text-align:center">
+      <div style="font-size:11px;color:#6a8aaa;letter-spacing:1px;margin-bottom:4px">LIVE PREVIEW</div>
+      <div id="live-pts" style="font-family:'Orbitron',sans-serif;font-size:52px;font-weight:900;color:var(--gold);line-height:1">0</div>
+      <div id="pts-breakdown" style="font-size:11px;color:#6a8aaa;margin-top:8px;min-height:16px"></div>
+    </div>
+    <div class="score-form" style="margin-bottom:12px">
+      <div class="form-group">
+        <label>Participant</label>
+        <select id="sel-participant" onchange="updatePlayerDropdown()"><option value="">— Select —</option></select>
+      </div>
+      <div class="form-group">
+        <label>Player</label>
+        <select id="sel-player" onchange="calcLive()"><option value="">— Select participant first —</option></select>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Match Name</label>
+        <input type="text" id="inp-match" placeholder="e.g., RCB vs MI · Match 7">
+      </div>
+    </div>
+    <div class="sdivider"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#6a8aaa;font-size:13px;margin-bottom:10px">🏏 BATTING</div>
+    <div class="score-form" style="margin-bottom:10px">
+      <div class="form-group"><label>Runs Scored</label><input type="number" id="inp-runs" value="0" min="0" onchange="calcLive()"></div>
+      <div class="form-group"><label>Fours Hit</label><input type="number" id="inp-fours" value="0" min="0" onchange="calcLive()"></div>
+      <div class="form-group"><label>Sixes Hit</label><input type="number" id="inp-sixes" value="0" min="0" onchange="calcLive()"></div>
+    </div>
+    <div class="cb-row" style="margin-bottom:14px">
+      <label class="cb-item"><input type="checkbox" id="chk-fifty" onchange="calcLive()"> 50 Runs Bonus (+50)</label>
+      <label class="cb-item"><input type="checkbox" id="chk-hundred" onchange="calcLive()"> 100 Runs Bonus (+100)</label>
+      <label class="cb-item"><input type="checkbox" id="chk-duck" onchange="calcLive()"> 💀 Duck (−30)</label>
+    </div>
+    <div class="sdivider"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#6a8aaa;font-size:13px;margin-bottom:10px">🎯 BOWLING</div>
+    <div class="score-form" style="margin-bottom:10px">
+      <div class="form-group"><label>Wickets Taken</label><input type="number" id="inp-wickets" value="0" min="0" onchange="calcLive()"></div>
+      <div class="form-group"><label>Maiden Overs</label><input type="number" id="inp-maiden" value="0" min="0" onchange="calcLive()"></div>
+    </div>
+    <div class="cb-row" style="margin-bottom:14px">
+      <label class="cb-item"><input type="checkbox" id="chk-3w" onchange="calcLive()"> 3 Wickets Bonus (+60)</label>
+      <label class="cb-item"><input type="checkbox" id="chk-5w" onchange="calcLive()"> 5 Wickets Bonus (+60)</label>
+      <label class="cb-item"><input type="checkbox" id="chk-0w" onchange="calcLive()"> 💀 0 Wickets (−30)</label>
+    </div>
+    <div class="sdivider"></div>
+    <div style="font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:#6a8aaa;font-size:13px;margin-bottom:10px">🤝 FIELDING &amp; BONUS</div>
+    <div class="score-form" style="margin-bottom:10px">
+      <div class="form-group"><label>Catches</label><input type="number" id="inp-catches" value="0" min="0" onchange="calcLive()"></div>
+    </div>
+    <div class="cb-row" style="margin-bottom:16px">
+      <label class="cb-item"><input type="checkbox" id="chk-motm" onchange="calcLive()"> 🏆 Man of the Match (+100)</label>
+      <label class="cb-item"><input type="checkbox" id="chk-captain" onchange="calcLive()"> 👑 Captain (×2 Points)</label>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1" onclick="submitScore()">✅ SUBMIT SCORE</button>
+      <button class="btn btn-secondary" onclick="resetForm()">RESET</button>
+    </div>
+  </div>
+  <div class="viewer-only" id="viewer-score-msg" style="text-align:center;padding:40px 20px;color:#6a8aaa">
+    <div style="font-size:44px;margin-bottom:14px">🔒</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px;color:#ccd">Admin Only</div>
+    <div style="font-size:14px;margin-bottom:16px">Score entry is managed by Admin.</div>
+    <button class="btn btn-primary btn-sm" onclick="openLogin()">🔐 ADMIN LOGIN</button>
+  </div>
+</div>
+
+<!-- PAGE: LEADERBOARD -->
+<div id="page-leaderboard" class="page">
+  <div class="card">
+    <div class="card-title">🏆 LEADERBOARD</div>
+    <div style="overflow-x:auto">
+      <table class="lb-table">
+        <thead><tr><th style="width:46px">RANK</th><th>PARTICIPANT</th><th>PAYMENT</th><th style="text-align:right">TOTAL PTS</th></tr></thead>
+        <tbody id="lb-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">💰 PRIZE POOL</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:30px;color:var(--gold);text-align:center">₹<span id="prize-pool">0</span></div>
+    <div style="font-size:13px;color:#6a8aaa;text-align:center;margin-top:8px" id="participant-count">0 Participants</div>
+  </div>
+</div>
+
+<!-- PAGE: TOP PLAYERS -->
+<div id="page-topplayers" class="page">
+  <div class="card">
+    <div class="card-title">⭐ TOP PERFORMERS</div>
+    <select id="sort-topplayers" onchange="renderTopPlayers()" style="width:100%;margin-bottom:14px">
+      <option value="points">Total Points (High → Low)</option>
+      <option value="matches">Matches Played (High → Low)</option>
+    </select>
+    <div id="tp-list" class="tp-grid"></div>
+  </div>
+</div>
+
+<!-- PAGE: HISTORY -->
+<div id="page-history" class="page">
+  <div class="card">
+    <div class="card-title">📅 SCORE HISTORY</div>
+    <div class="filter-row">
+      <select id="hist-pfilter" onchange="renderHistory()" style="flex:1;min-width:130px"><option value="">All Participants</option></select>
+      <select id="hist-mfilter" onchange="renderHistory()" style="flex:1;min-width:130px"><option value="">All Matches</option></select>
+      <button class="btn btn-secondary btn-sm" onclick="shareLeaderboard()">📤 SHARE</button>
+      <button class="btn btn-danger btn-sm admin-only" onclick="clearHistory()">🗑 CLEAR</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<!-- MODAL: ADD PLAYER -->
+<div id="modal-player" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">➕ ADD PLAYER</div>
+    <div style="font-size:13px;color:#6a8aaa;margin-bottom:14px">
+      Participant: <strong id="modal-pname" style="color:var(--gold)">-</strong><br>
+      IPL Team: <strong id="modal-tname" style="color:var(--gold)">-</strong>
+    </div>
+    <div class="form-group" style="margin-bottom:11px">
+      <label>Player Name</label>
+      <input type="text" id="modal-player-name" placeholder="Enter player name...">
+    </div>
+    <div class="form-group" style="margin-bottom:11px">
+      <label>Role</label>
+      <select id="modal-player-role">
+        <option value="bat">🏏 Batsman</option>
+        <option value="wk">🧤 Wicket Keeper</option>
+        <option value="bowl">🎯 Bowler</option>
+        <option value="all">⭐ All-Rounder</option>
+      </select>
+    </div>
+    <div style="margin-bottom:6px">
+      <label class="cb-item"><input type="checkbox" id="modal-captain"> 👑 Captain (gets 2× points)</label>
+    </div>
+    <div class="modal-info" id="modal-slot-info"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal()">CANCEL</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmAddPlayer()">ADD PLAYER</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script type="module">
+// ─── FIREBASE SDK (modular v10) ────────────────────────────────────────────
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import{getFirestore,doc,onSnapshot,setDoc,getDoc}from'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig={
+  apiKey:"AIzaSyDViu4uHH8b_eM48K8OCrG1zaRK-fcPBrc",
+  authDomain:"ipl-fantasy-league-2026-22ce4.firebaseapp.com",
+  projectId:"ipl-fantasy-league-2026-22ce4",
+  storageBucket:"ipl-fantasy-league-2026-22ce4.firebasestorage.app",
+  messagingSenderId:"1026676941139",
+  appId:"1:1026676941139:web:c77b7f04353caef63e41a6",
+  measurementId:"G-Y4XE01C92G"
+};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const STATE_DOC=doc(db,'ipl2026','state');
+
+// Expose globals needed by inline onclick handlers
+window.addParticipant=addParticipant;
+window.removeParticipant=removeParticipant;
+window.togglePayment=togglePayment;
+window.toggleSection=toggleSection;
+window.showAddPlayerModal=showAddPlayerModal;
+window.closeModal=closeModal;
+window.confirmAddPlayer=confirmAddPlayer;
+window.removePlayer=removePlayer;
+window.toggleTeamLock=toggleTeamLock;
+window.updatePlayerDropdown=updatePlayerDropdown;
+window.calcLive=calcLive;
+window.submitScore=submitScore;
+window.resetForm=resetForm;
+window.deleteScore=deleteScore;
+window.clearHistory=clearHistory;
+window.shareLeaderboard=shareLeaderboard;
+window.switchTab=switchTab;
+window.toggleTheme=toggleTheme;
+window.openLogin=openLogin;
+window.handleLogin=handleLogin;
+window.enterAsViewer=enterAsViewer;
+window.handleLogout=handleLogout;
+window.renderHistory=renderHistory;
+window.renderTopPlayers=renderTopPlayers;
+
+// ─── DATA ──────────────────────────────────────────────────────────────────
+const IPL_TEAMS=[
+  {id:'csk',  name:'CSK',  full:'Chennai Super Kings',       color:'#ffd700'},
+  {id:'mi',   name:'MI',   full:'Mumbai Indians',             color:'#005da0'},
+  {id:'rcb',  name:'RCB',  full:'Royal Challengers Bengaluru',color:'#cc0000'},
+  {id:'kkr',  name:'KKR',  full:'Kolkata Knight Riders',     color:'#7c5cbf'},
+  {id:'dc',   name:'DC',   full:'Delhi Capitals',             color:'#1e90ff'},
+  {id:'rr',   name:'RR',   full:'Rajasthan Royals',           color:'#ff69b4'},
+  {id:'pbks', name:'PBKS', full:'Punjab Kings',               color:'#ff6b00'},
+  {id:'srh',  name:'SRH',  full:'Sunrisers Hyderabad',        color:'#ff6600'},
+  {id:'gt',   name:'GT',   full:'Gujarat Titans',             color:'#0099cc'},
+  {id:'lsg',  name:'LSG',  full:'Lucknow Super Giants',       color:'#66bb6a'},
+];
+const MAX_PER_TEAM=3;
+const R={run:1,four:4,six:6,fifty:50,hundred:100,duck:-30,wicket:30,maiden:30,w3:60,w5:60,w0:-30,catch_:30,motm:100,captainMult:2};
+
+let state={participants:[],scores:[],teamsLocked:false};
+let userRole='viewer';
+let _mPIdx=null,_mTeamId=null;
+let _unsubscribe=null;  // Firestore listener cleanup
+
+// ─── AUTH ──────────────────────────────────────────────────────────────────
+function handleLogin(){
+  const u=document.getElementById('login-username').value.trim();
+  const p=document.getElementById('login-password').value;
+  const err=document.getElementById('login-error');
+  if(u==='ipl2026'&&p==='@1234'){
+    userRole='admin';localStorage.setItem('iplRole','admin');
+    err.style.display='none';
+    document.getElementById('login-container').classList.remove('show');
+    document.body.style.overflow='auto';
+    initUI();showToast('✅ Welcome Admin!');
+  }else{err.textContent='❌ Wrong credentials';err.style.display='block';}
+}
+function enterAsViewer(){
+  userRole='viewer';localStorage.removeItem('iplRole');
+  document.getElementById('login-container').classList.remove('show');
+  document.body.style.overflow='auto';
+  initUI();showToast('👁️ Viewing as Guest');
+}
+function handleLogout(){userRole='viewer';localStorage.removeItem('iplRole');initUI();showToast('Logged out.');}
+function openLogin(){document.getElementById('login-container').classList.add('show');document.body.style.overflow='hidden';}
+
+function checkAuth(){
+  userRole=localStorage.getItem('iplRole')==='admin'?'admin':'viewer';
+  if(!localStorage.getItem('iplVisited')){
+    localStorage.setItem('iplVisited','1');
+    document.getElementById('login-container').classList.add('show');
+  }
+  startRealtimeSync();
+}
+
+// ─── THEME ─────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const dark=document.body.classList.contains('dark-mode');
+  document.body.classList.toggle('dark-mode',!dark);document.body.classList.toggle('light-mode',dark);
+  localStorage.setItem('iplTheme',dark?'light':'dark');
+  document.querySelector('.hbtn[onclick="toggleTheme()"]').textContent=dark?'☀️ Light':'🌙 Dark';
+}
+function loadTheme(){
+  const t=localStorage.getItem('iplTheme')||'dark';
+  document.body.classList.toggle('dark-mode',t==='dark');document.body.classList.toggle('light-mode',t==='light');
+  document.querySelector('.hbtn[onclick="toggleTheme()"]').textContent=t==='light'?'☀️ Light':'🌙 Dark';
+}
+
+// ─── CONFETTI ──────────────────────────────────────────────────────────────
+function showWinnerPopup(n,p){
+  document.getElementById('winner-name').textContent=n.toUpperCase();
+  document.getElementById('winner-points').textContent=p+' PTS';
+  document.getElementById('winner-popup').classList.add('show');
+  spawnConfetti();
+  setTimeout(()=>document.getElementById('winner-popup').classList.remove('show'),5000);
+}
+function spawnConfetti(){
+  const cols=['#ffd700','#ff3347','#00c853','#3399ff','#ff69b4'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');el.className='confetti-p';
+    el.style.cssText=`left:${Math.random()*innerWidth}px;top:-12px;background:${cols[i%5]};animation:cffall ${1.8+Math.random()*1.5}s linear forwards`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),3500);
+  }
+}
+const _csstyle=document.createElement('style');
+_csstyle.textContent=`@keyframes cffall{to{transform:translateY(${innerHeight+20}px) rotate(720deg);opacity:0}}`;
+document.head.appendChild(_csstyle);
+
+// ─── FIREBASE STORAGE ──────────────────────────────────────────────────────
+// Show a subtle sync indicator
+function setSyncStatus(status){
+  let el=document.getElementById('sync-status');
+  if(!el)return;
+  if(status==='saving'){el.textContent='☁️ Saving...';el.style.color='var(--gold)';}
+  else if(status==='saved'){el.textContent='✅ Synced';el.style.color='var(--green)';}
+  else if(status==='error'){el.textContent='⚠️ Sync Error';el.style.color='var(--red2)';}
+  else if(status==='live'){el.textContent='🔴 Live';el.style.color='var(--green)';}
+}
+
+async function save(){
+  setSyncStatus('saving');
+  try{
+    // Firestore has a 1MB per-document limit; our state is tiny so this is fine
+    await setDoc(STATE_DOC,{
+      data:JSON.stringify(state),
+      updatedAt:Date.now()
+    });
+    setSyncStatus('saved');
+  }catch(e){
+    console.error('Firebase save error',e);
+    setSyncStatus('error');
+    // Fallback: also keep in localStorage so data isn't lost
+    localStorage.setItem('iplState26_backup',JSON.stringify(state));
+    showToast('⚠️ Cloud sync failed – saved locally','error');
+  }
+}
+
+function normalizeState(raw){
+  const s=raw||{participants:[],scores:[],teamsLocked:false};
+  if(!s.participants)s.participants=[];
+  if(!s.scores)s.scores=[];
+  if(s.teamsLocked===undefined)s.teamsLocked=false;
+  s.participants.forEach(p=>{
+    if(!p.teamPlayers)p.teamPlayers={};
+    IPL_TEAMS.forEach(t=>{if(!p.teamPlayers[t.id])p.teamPlayers[t.id]=[];});
+  });
+  return s;
+}
+
+function startRealtimeSync(){
+  // Unsubscribe any previous listener
+  if(_unsubscribe)_unsubscribe();
+  setSyncStatus('live');
+  _unsubscribe=onSnapshot(STATE_DOC,(snap)=>{
+    if(snap.exists()){
+      try{
+        const raw=JSON.parse(snap.data().data);
+        state=normalizeState(raw);
+      }catch(e){state=normalizeState(null);}
+    }else{
+      // Document doesn't exist yet — initialize it
+      state=normalizeState(null);
+    }
+    // Re-render everything with the latest data
+    renderParticipantList();
+    renderSquads();
+    updateParticipantSelectors();
+    renderLeaderboard();
+    renderTopPlayers();
+    renderHistory();
+  },(err)=>{
+    console.error('Firestore listener error',err);
+    setSyncStatus('error');
+    showToast('⚠️ Real-time sync disconnected','error');
+  });
+}
+
+// PARTICIPANTS
+function addParticipant(){
+  if(state.teamsLocked){showToast('Teams locked!','error');return;}
+  const inp=document.getElementById('participant-input');
+  const name=inp.value.trim();
+  if(!name){showToast('Enter a name!','error');return;}
+  if(state.participants.some(p=>p.name.toLowerCase()===name.toLowerCase())){showToast('Already exists!','error');return;}
+  const teamPlayers={};IPL_TEAMS.forEach(t=>teamPlayers[t.id]=[]);
+  state.participants.push({name,paid:false,teamPlayers});
+  save();inp.value='';renderParticipantList();renderSquads();updateParticipantSelectors();
+}
+function removeParticipant(idx){
+  if(state.teamsLocked){showToast('Teams locked!','error');return;}
+  if(!confirm('Remove '+state.participants[idx].name+'?'))return;
+  state.participants.splice(idx,1);
+  save();renderParticipantList();renderSquads();updateParticipantSelectors();renderLeaderboard();
+}
+function togglePayment(idx){
+  state.participants[idx].paid=!state.participants[idx].paid;
+  save();renderParticipantList();renderLeaderboard();
+}
+function getTotalCount(p){return Object.values(p.teamPlayers).reduce((a,arr)=>a+arr.length,0);}
+
+function renderParticipantList(){
+  const el=document.getElementById('participant-list');
+  if(!state.participants.length){
+    el.innerHTML='<div style="color:#6a8aaa;text-align:center;padding:18px;font-size:14px">No participants yet.</div>';return;
+  }
+  el.innerHTML=state.participants.map((p,i)=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border-radius:8px;padding:10px 13px;margin-bottom:8px;gap:10px">
+      <div>
+        <div style="font-weight:700;font-size:15px">${p.name}</div>
+        <div style="font-size:12px;color:#6a8aaa;margin-top:3px">${getTotalCount(p)}/30 players selected</div>
+        <button onclick="togglePayment(${i})" style="background:none;border:none;color:${p.paid?'var(--green)':'var(--red2)'};cursor:pointer;font-size:12px;font-weight:700;margin-top:4px">${p.paid?'✅ PAID ₹500':'❌ PENDING ₹500'}</button>
+      </div>
+      <button onclick="removeParticipant(${i})" style="background:none;border:none;color:#c44;cursor:pointer;font-size:18px;padding:4px 8px;border-radius:5px">🗑</button>
+    </div>
+  `).join('');
+}
+
+// SQUADS — 10 teams × 3 players per participant
+function renderSquads(){
+  const container=document.getElementById('squads-container');
+  if(!state.participants.length){
+    container.innerHTML='<div style="text-align:center;color:#6a8aaa;padding:40px;font-size:14px">Add participants first to see their squads.</div>';return;
+  }
+  container.innerHTML=state.participants.map((p,pIdx)=>{
+    const total=getTotalCount(p);
+    const totalPts=getParticipantPts(p.name);
+
+    const teamsHtml=IPL_TEAMS.map(team=>{
+      const players=p.teamPlayers[team.id]||[];
+      const cnt=players.length;
+      const isFull=cnt>=MAX_PER_TEAM;
+      const badgeClass=cnt===0?'slot-empty-badge':isFull?'slot-full':'slot-partial';
+
+      let rowsHtml='';
+      for(let i=0;i<MAX_PER_TEAM;i++){
+        if(players[i]){
+          const pl=players[i];
+          const pts=getPlayerPts(p.name,pl.name);
+          const rl={'bat':'BAT','wk':'WK','bowl':'BOWL','all':'ALL'}[pl.role]||pl.role;
+          rowsHtml+=`<div class="player-row">
+            <span class="role-badge role-${pl.role}">${rl}</span>
+            <span class="pl-name">${pl.name}${pl.isCaptain?' 👑':''}</span>
+            ${pts?`<span class="pl-pts">${pts}pts</span>`:''}
+            ${!state.teamsLocked?`<button class="del-btn" onclick="removePlayer(${pIdx},'${team.id}',${i})">✕</button>`:''}
+          </div>`;
+        }else{
+          rowsHtml+=`<div class="empty-slot-row">⬜ Slot ${i+1} empty</div>`;
+        }
+      }
+
+      const addDisabled=isFull||state.teamsLocked;
+      return `<div class="ipl-team-block">
+        <div class="ipl-team-header">
+          <div class="ipl-team-name"><span class="team-dot" style="background:${team.color}"></span>${team.name}</div>
+          <span class="slot-badge ${badgeClass}">${cnt}/${MAX_PER_TEAM}</span>
+        </div>
+        ${rowsHtml}
+        ${!state.teamsLocked?`<button class="add-pl-btn${isFull?' team-full':''}" onclick="showAddPlayerModal(${pIdx},'${team.id}')" ${addDisabled?'disabled':''}>${isFull?'✅ Full (3/3)':'+ Add Player'}</button>`:''}
+      </div>`;
+    }).join('');
+
+    return `<div class="participant-section" id="psec-${pIdx}">
+      <div class="participant-header" onclick="toggleSection(${pIdx})">
+        <div>
+          <div class="participant-name-big">👤 ${p.name}</div>
+          <div style="font-size:12px;color:#6a8aaa;margin-top:3px">${state.teamsLocked?'🔒 Locked':'Click to expand / collapse'}</div>
+        </div>
+        <div class="participant-stats">
+          <span class="p-stat players">${total}/30 Players</span>
+          ${totalPts?`<span class="p-stat pts">${totalPts} pts</span>`:''}
+          <span class="p-stat ${p.paid?'paid-yes':'paid-no'}">${p.paid?'✅ PAID':'❌ PENDING'}</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="participant-body">
+        <div class="ipl-teams-grid">${teamsHtml}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSection(pIdx){document.getElementById('psec-'+pIdx).classList.toggle('collapsed');}
+function getParticipantPts(n){return state.scores.filter(s=>s.participant===n).reduce((a,s)=>a+s.pts,0);}
+function getPlayerPts(pName,plName){return state.scores.filter(s=>s.participant===pName&&s.player===plName).reduce((a,s)=>a+s.pts,0);}
+
+function removePlayer(pIdx,teamId,plIdx){
+  if(state.teamsLocked){showToast('Teams locked!','error');return;}
+  state.participants[pIdx].teamPlayers[teamId].splice(plIdx,1);
+  save();renderSquads();updatePlayerDropdown();
+}
+
+function toggleTeamLock(){
+  if(!state.participants.length){showToast('Add participants first!','error');return;}
+  state.teamsLocked=!state.teamsLocked;save();
+  const btn=document.getElementById('lock-btn'),status=document.getElementById('lock-status');
+  if(state.teamsLocked){btn.textContent='🔒 UNLOCK TEAMS';status.textContent='🔒 Teams LOCKED';status.style.color='var(--green)';showToast('✅ Teams locked!');}
+  else{btn.textContent='🔓 LOCK TEAMS';status.textContent='';showToast('🔓 Teams unlocked!');}
+  renderSquads();
+}
+
+// MODAL
+function showAddPlayerModal(pIdx,teamId){
+  if(state.teamsLocked){showToast('Teams locked!','error');return;}
+  const p=state.participants[pIdx];
+  const team=IPL_TEAMS.find(t=>t.id===teamId);
+  const players=p.teamPlayers[teamId]||[];
+  if(players.length>=MAX_PER_TEAM){showToast(team.name+' is full (3/3)!','error');return;}
+  _mPIdx=pIdx;_mTeamId=teamId;
+  document.getElementById('modal-pname').textContent=p.name;
+  document.getElementById('modal-tname').textContent=team.name+' – '+team.full;
+  document.getElementById('modal-player-name').value='';
+  document.getElementById('modal-player-role').value='bat';
+  document.getElementById('modal-captain').checked=false;
+  document.getElementById('modal-slot-info').innerHTML=
+    `<strong>${team.name} slots:</strong> ${players.length}/${MAX_PER_TEAM} used &nbsp;|&nbsp; <strong>Total squad:</strong> ${getTotalCount(p)}/30`;
+  document.getElementById('modal-player').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-player-name').focus(),80);
+}
+function closeModal(){document.getElementById('modal-player').classList.remove('open');_mPIdx=null;_mTeamId=null;}
+function confirmAddPlayer(){
+  if(_mPIdx===null)return;
+  const name=document.getElementById('modal-player-name').value.trim();
+  const role=document.getElementById('modal-player-role').value;
+  const isCaptain=document.getElementById('modal-captain').checked;
+  if(!name){showToast('Enter player name!','error');return;}
+  const p=state.participants[_mPIdx];
+  if((p.teamPlayers[_mTeamId]||[]).length>=MAX_PER_TEAM){showToast('Team slot full!','error');return;}
+  if(isCaptain){IPL_TEAMS.forEach(t=>{(p.teamPlayers[t.id]||[]).forEach(pl=>pl.isCaptain=false);});}
+  p.teamPlayers[_mTeamId].push({name,role,isCaptain});
+  save();renderSquads();updatePlayerDropdown();
+  const teamName=IPL_TEAMS.find(t=>t.id===_mTeamId)?.name||_mTeamId;
+  showToast('✅ '+name+' added to '+p.name+'\'s '+teamName+' squad!');
+  closeModal();
+}
+
+// SCORE
+function updateParticipantSelectors(){
+  const opts='<option value="">— Select —</option>'+state.participants.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+  document.getElementById('sel-participant').innerHTML=opts;
+  document.getElementById('sel-player').innerHTML='<option value="">— Select participant first —</option>';
+}
+function updatePlayerDropdown(){
+  const pName=document.getElementById('sel-participant').value;
+  const p=state.participants.find(x=>x.name===pName);
+  if(!p){document.getElementById('sel-player').innerHTML='<option value="">— Select participant first —</option>';calcLive();return;}
+  const all=[];
+  IPL_TEAMS.forEach(team=>{(p.teamPlayers[team.id]||[]).forEach(pl=>all.push({...pl,teamName:team.name,teamId:team.id}));});
+  if(!all.length){document.getElementById('sel-player').innerHTML='<option value="">No players in squad yet</option>';calcLive();return;}
+  const rl={'bat':'Bat','wk':'WK','bowl':'Bowl','all':'All'};
+  document.getElementById('sel-player').innerHTML='<option value="">— Select player —</option>'+
+    all.map(pl=>`<option value="${pl.name}|||${pl.teamId}">${pl.name} (${pl.teamName}·${rl[pl.role]||pl.role})${pl.isCaptain?' 👑':''}</option>`).join('');
+  calcLive();
+}
+function getSelectedPlayer(){
+  const pName=document.getElementById('sel-participant').value;
+  const val=document.getElementById('sel-player').value;
+  if(!pName||!val)return null;
+  const[plName,teamId]=val.split('|||');
+  const p=state.participants.find(x=>x.name===pName);
+  return p?(p.teamPlayers[teamId]||[]).find(x=>x.name===plName)||null:null;
+}
+function calcLive(){const r=computePoints();document.getElementById('live-pts').textContent=r.total;document.getElementById('pts-breakdown').textContent=r.parts.join(' · ');}
+function computePoints(){
+  const runs=+document.getElementById('inp-runs').value||0;
+  const fours=+document.getElementById('inp-fours').value||0;
+  const sixes=+document.getElementById('inp-sixes').value||0;
+  const wickets=+document.getElementById('inp-wickets').value||0;
+  const maiden=+document.getElementById('inp-maiden').value||0;
+  const catches=+document.getElementById('inp-catches').value||0;
+  const fifty=document.getElementById('chk-fifty').checked;
+  const hundred=document.getElementById('chk-hundred').checked;
+  const duck=document.getElementById('chk-duck').checked;
+  const w3=document.getElementById('chk-3w').checked;
+  const w5=document.getElementById('chk-5w').checked;
+  const w0=document.getElementById('chk-0w').checked;
+  const motm=document.getElementById('chk-motm').checked;
+  const capChk=document.getElementById('chk-captain').checked;
+  const parts=[];let total=0;
+  if(runs){const v=runs*R.run;total+=v;parts.push('Runs:+'+v);}
+  if(fours){const v=fours*R.four;total+=v;parts.push('4s:+'+v);}
+  if(sixes){const v=sixes*R.six;total+=v;parts.push('6s:+'+v);}
+  if(fifty){total+=R.fifty;parts.push('50B:+'+R.fifty);}
+  if(hundred){total+=R.hundred;parts.push('100B:+'+R.hundred);}
+  if(duck){total+=R.duck;parts.push('Duck:'+R.duck);}
+  if(wickets){const v=wickets*R.wicket;total+=v;parts.push('Wkts:+'+v);}
+  if(maiden){const v=maiden*R.maiden;total+=v;parts.push('Maiden:+'+v);}
+  if(w3){total+=R.w3;parts.push('3W:+'+R.w3);}
+  if(w5){total+=R.w5;parts.push('5W:+'+R.w5);}
+  if(w0){total+=R.w0;parts.push('0W:'+R.w0);}
+  if(catches){const v=catches*R.catch_;total+=v;parts.push('Catch:+'+v);}
+  if(motm){total+=R.motm;parts.push('MOTM:+'+R.motm);}
+  const pl=getSelectedPlayer();
+  if(capChk||(pl&&pl.isCaptain)){total=total*R.captainMult;parts.push('👑Cap:×'+R.captainMult);}
+  return{total:Math.round(total),parts};
+}
+function resetForm(){
+  ['inp-runs','inp-fours','inp-sixes','inp-wickets','inp-maiden','inp-catches'].forEach(id=>document.getElementById(id).value=0);
+  ['chk-fifty','chk-hundred','chk-duck','chk-3w','chk-5w','chk-0w','chk-motm','chk-captain'].forEach(id=>document.getElementById(id).checked=false);
+  document.getElementById('inp-match').value='';calcLive();
+}
+function submitScore(){
+  const participant=document.getElementById('sel-participant').value;
+  const val=document.getElementById('sel-player').value;
+  const match=document.getElementById('inp-match').value.trim()||'Unknown Match';
+  if(!participant){showToast('Select participant!','error');return;}
+  if(!val){showToast('Select player!','error');return;}
+  const[playerName,teamId]=val.split('|||');
+  const team=IPL_TEAMS.find(t=>t.id===teamId);
+  const r=computePoints();
+  state.scores.push({participant,player:playerName,team:team?.name||teamId,match,pts:r.total,breakdown:r.parts.join(' · '),ts:Date.now()});
+  save();showToast('🔥 '+participant+' · '+playerName+': +'+r.total+' pts!');
+  if(r.total>=200)setTimeout(()=>showWinnerPopup(participant,r.total),500);
+  resetForm();renderLeaderboard();renderTopPlayers();renderSquads();
+}
+
+// LEADERBOARD
+function getTotals(){const t={};state.participants.forEach(p=>t[p.name]=0);state.scores.forEach(s=>{if(t[s.participant]!==undefined)t[s.participant]+=s.pts;});return t;}
+function renderLeaderboard(){
+  updatePrizePool();
+  const totals=getTotals();const sorted=Object.entries(totals).sort((a,b)=>b[1]-a[1]);
+  const body=document.getElementById('lb-body');
+  if(!sorted.length){body.innerHTML='<tr><td colspan="4" style="text-align:center;color:#6a8aaa;padding:28px">Add participants to begin!</td></tr>';return;}
+  body.innerHTML=sorted.map(([name,pts],i)=>{
+    const rc=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':''+( i+1);
+    const p=state.participants.find(x=>x.name===name);
+    const badge=p?.paid?'<span class="pay-badge pay-paid">✅ PAID</span>':'<span class="pay-badge pay-pend">❌ PENDING</span>';
+    return`<tr><td class="${rc}">${medal}</td><td style="font-weight:700">${name}</td><td>${badge}</td><td class="pts-cell" style="text-align:right">${pts}</td></tr>`;
+  }).join('');
+}
+function updatePrizePool(){
+  const paid=state.participants.filter(p=>p.paid).length;
+  const total=state.participants.length;
+  document.getElementById('prize-pool').textContent=(paid*500)+' / '+(total*500);
+  document.getElementById('participant-count').textContent=total+' Participant'+(total!==1?'s':'')+' · '+paid+' Paid';
+}
+
+// TOP PLAYERS
+function renderTopPlayers(){
+  const sortBy=document.getElementById('sort-topplayers').value||'points';
+  const stats={};
+  state.scores.forEach(s=>{if(!stats[s.player])stats[s.player]={points:0,matches:0};stats[s.player].points+=s.pts;stats[s.player].matches++;});
+  const sorted=Object.entries(stats).map(([n,d])=>({name:n,...d})).sort((a,b)=>sortBy==='matches'?b.matches-a.matches:b.points-a.points);
+  const el=document.getElementById('tp-list');
+  if(!sorted.length){el.innerHTML='<div style="grid-column:1/-1;text-align:center;color:#6a8aaa;padding:28px">No scores yet.</div>';return;}
+  el.innerHTML=sorted.slice(0,12).map((p,i)=>`
+    <div class="tp-card">
+      <div class="tp-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+      <div class="tp-name">${p.name}</div>
+      <div class="tp-pts">${p.points}</div>
+      <div class="tp-meta">${p.matches} match${p.matches!==1?'es':''}</div>
+    </div>
+  `).join('');
+}
+
+// HISTORY
+function renderHistory(){
+  const pf=document.getElementById('hist-pfilter'),mf=document.getElementById('hist-mfilter');
+  const pv=pf.value,mv=mf.value;
+  pf.innerHTML='<option value="">All Participants</option>'+state.participants.map(p=>`<option value="${p.name}" ${p.name===pv?'selected':''}>${p.name}</option>`).join('');
+  const matches=[...new Set(state.scores.map(s=>s.match))];
+  mf.innerHTML='<option value="">All Matches</option>'+matches.map(m=>`<option value="${m}" ${m===mv?'selected':''}>${m}</option>`).join('');
+  let scores=[...state.scores].reverse();
+  if(pv)scores=scores.filter(s=>s.participant===pv);
+  if(mv)scores=scores.filter(s=>s.match===mv);
+  const el=document.getElementById('history-list');
+  if(!scores.length){el.innerHTML='<div style="text-align:center;color:#6a8aaa;padding:20px">No scores yet.</div>';return;}
+  el.innerHTML=scores.map(s=>{
+    const date=new Date(s.ts).toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+    const origIdx=state.scores.indexOf(s);
+    return`<div class="hist-item">
+      <div>
+        <div style="font-weight:700;color:#ccd;font-size:14px">${s.participant} · ${s.player}</div>
+        <div style="font-size:12px;color:#6a8aaa;margin-top:2px">${s.match} · ${s.team||''} · ${date}</div>
+        <div style="font-size:11px;color:#3a4a5a;margin-top:2px">${s.breakdown}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:'Orbitron',sans-serif;font-size:13px;color:${s.pts>=0?'var(--green)':'var(--red2)'}">${s.pts>=0?'+':''}${s.pts}</span>
+        ${userRole==='admin'?`<button onclick="deleteScore(${origIdx})" style="background:none;border:none;color:#c44;cursor:pointer;font-size:15px;padding:2px 5px;border-radius:4px">🗑</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function deleteScore(idx){state.scores.splice(idx,1);save();renderHistory();renderLeaderboard();renderTopPlayers();renderSquads();}
+function clearHistory(){if(confirm('Clear ALL history?')){state.scores=[];save();renderHistory();renderLeaderboard();renderTopPlayers();renderSquads();}}
+function shareLeaderboard(){
+  const t=getTotals();const sorted=Object.entries(t).sort((a,b)=>b[1]-a[1]);
+  const text='🏏 IPL 2026 Fantasy League\n\n'+sorted.map(([n,p],i)=>`${i+1}. ${n} — ${p} pts`).join('\n')+'\n\n#IPL2026Fantasy';
+  if(navigator.share)navigator.share({title:'IPL Fantasy',text}).catch(()=>{});
+  else navigator.clipboard.writeText(text).then(()=>showToast('📋 Copied!')).catch(()=>{});
+}
+
+// TAB
+function switchTab(name){
+  if(userRole==='viewer'&&name==='score'){showToast('🔒 Admin only','error');return;}
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='leaderboard')renderLeaderboard();
+  if(name==='topplayers')renderTopPlayers();
+  if(name==='history')renderHistory();
+}
+
+// TOAST
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast'+(type==='error'?' error':'');
+  setTimeout(()=>t.classList.add('show'),10);setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// INIT UI
+function initUI(){
+  const isAdmin=userRole==='admin';
+  document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('hidden',!isAdmin));
+  document.querySelectorAll('.viewer-only').forEach(el=>el.classList.toggle('show',!isAdmin));
+  document.getElementById('logout-btn').style.display=isAdmin?'':'none';
+  document.getElementById('login-btn-header').style.display=isAdmin?'none':'';
+  document.getElementById('role-badge').textContent=isAdmin?'🔐 ADMIN':'👁️ VIEWER';
+  if(!isAdmin){
+    const active=document.querySelector('.page.active');
+    if(active&&active.id==='page-score'){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.getElementById('page-leaderboard').classList.add('active');
+      document.getElementById('tab-leaderboard').classList.add('active');
+    }
+  }
+  renderParticipantList();renderSquads();updateParticipantSelectors();
+  renderLeaderboard();renderTopPlayers();renderHistory();
+  const lb=document.getElementById('lock-btn'),ls=document.getElementById('lock-status');
+  if(state.teamsLocked){lb.textContent='🔒 UNLOCK TEAMS';ls.textContent='🔒 Teams LOCKED';ls.style.color='var(--green)';}
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  loadTheme();checkAuth();
+  document.getElementById('participant-input').addEventListener('keydown',e=>{if(e.key==='Enter')addParticipant();});
+  document.getElementById('modal-player-name').addEventListener('keydown',e=>{if(e.key==='Enter')confirmAddPlayer();});
+  document.getElementById('modal-player').addEventListener('click',function(e){if(e.target===this)closeModal();});
+});
+
+</script>
+</body>
+</html>
